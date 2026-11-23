@@ -125,4 +125,4 @@ Databricks (serverless), Apache Spark MLlib (`Pipeline`, `CrossValidator`, `GBTR
 
 ## Related repository
 
-The data pipeline that builds the cleaned Silver table used here (Bronze → Silver → Gold, SQL and PySpark, plus the dashboard) is in **[nyc-yellow-taxi-2026](https://github.com/YOUR-USERNAME/nyc-yellow-taxi-2026)**.
+The data pipeline that builds the cleaned Silver table used here (Bronze → Silver → Gold, SQL and PySpark, plus the dashboard) is in **[nyc-yellow-taxi-2026](https://github.com/panagiotisflrs/nyc-yellow-taxi-2026.git)**.
