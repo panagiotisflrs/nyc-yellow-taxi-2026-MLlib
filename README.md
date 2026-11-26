@@ -25,7 +25,7 @@ Three machine-learning projects built with Spark MLlib on about 12.25M cleaned N
 - **Preprocessing inside the `Pipeline`:** encoders and scalers are fitted on training data only and applied unchanged to test data.
 - **Validation:** grid search with cross-validation for Projects A and B (3 folds for fare, one fold per month for tips). The test set is used once, after every tuning decision.
 - **Splits:** a random 80/20 split for the fare model; a time-based split (train January–April, test May) for the tip model, compared with a random split.
-- **Tracking:** every model is logged to MLflow with parameters, metrics and tags; fitted pipelines are saved to a Unity Catalog volume and reloaded to confirm they reproduce the in-memory predictions.
+- **Tracking:** every model is logged to MLflow with parameters, metrics and tags; fitted pipelines are saved to a Unity Catalog volume and reloaded to confirm they reproduce the in-memory predictions. Every run also records the Delta versions and row counts of its data, and each saved model carries a `manifest.json` (data versions, features, split, settings, metrics, software versions).
 
 ---
 
@@ -86,6 +86,7 @@ Each of 216 zones (at least 500 pickups) becomes one row: log trip count, averag
 
 - **Four fitted pipelines** in the Unity Catalog volume `/Volumes/taxi/taxi_ml/ml_models`: the tuned fare GBT, the fare GBT with the zone-pair feature, the tuned tip GBT (with a `decision_settings.json` holding the threshold and the rescaling weight) and the zone KMeans pipeline. Each was reloaded and checked against the in-memory model.
 - **Twenty-five MLflow runs**, tagged by `task`: ten for fare, six for tips, nine for clustering.
+- **Reproducibility records:** each run logs the Delta version of the Silver table and of its own input tables with their row counts, and each model folder holds a `manifest.json` with the data versions, features and types, split, hyperparameters, test metrics and software versions (Python, Spark, MLflow).
 - **Delta tables** in `taxi.taxi_ml`: the frozen samples and splits, `zone_profile`, `zone_clusters` (the assignment) and `zone_cluster_names`.
 
 ---
@@ -102,8 +103,9 @@ Each of 216 zones (at least 500 pickups) becomes one row: log trip count, averag
 ## Repository structure
 
 ```
-nyc-yellow-taxi-machine-learning/
+nyc-yellow-taxi-2026-MLlib/
 ├── README.md
+├── .gitignore
 └── notebooks/
     └── taxi_dataset_mllib.ipynb     # all three projects, with outputs
 ```
@@ -124,4 +126,4 @@ Databricks (serverless), Apache Spark MLlib (`Pipeline`, `CrossValidator`, `GBTR
 
 ## Related repository
 
-The data pipeline that builds the cleaned Silver table used here (Bronze → Silver → Gold, SQL and PySpark, plus the dashboard) is in **[nyc-yellow-taxi-2026](https://github.com/panagiotisflrs/nyc-yellow-taxi-2026.git)**.
+The data pipeline that builds the cleaned Silver table used here (Bronze → Silver → Gold, SQL and PySpark, plus the dashboard) is in **[nyc-yellow-taxi-2026](https://github.com/panagiotisflrs/nyc-yellow-taxi-2026)**.
