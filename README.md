@@ -25,7 +25,7 @@ Three machine-learning projects built with Spark MLlib on about 12.25M cleaned N
 - **Preprocessing inside the `Pipeline`:** encoders and scalers are fitted on training data only and applied unchanged to test data.
 - **Validation:** grid search with cross-validation for Projects A and B (3 folds for fare, one fold per month for tips). The test set is used once, after every tuning decision.
 - **Splits:** a random 80/20 split for the fare model; a time-based split (train January–April, test May) for the tip model, compared with a random split.
-- **Tracking:** every model is logged to MLflow with parameters, metrics and tags; fitted pipelines are saved to a Unity Catalog volume and reloaded to confirm they reproduce the in-memory predictions. Every run also records the Delta versions and row counts of its data, and each saved model carries a `manifest.json` (data versions, features, split, settings, metrics, software versions).
+- **Tracking:** every model is logged to MLflow with parameters, metrics and tags, and every tuning search is logged as a parent run with one child run per setting tried; fitted pipelines are saved to a Unity Catalog volume and reloaded to confirm they reproduce the in-memory predictions. Every model run also records the Delta versions and row counts of its data and lists its input tables as MLflow dataset inputs, and each saved model carries a `manifest.json` (data versions, features, split, settings, metrics, software versions).
 
 ---
 
@@ -85,8 +85,9 @@ Each of 216 zones (at least 500 pickups) becomes one row: log trip count, averag
 ## Saved models and tracked runs
 
 - **Four fitted pipelines** in the Unity Catalog volume `/Volumes/taxi/taxi_ml/ml_models`: the tuned fare GBT, the fare GBT with the zone-pair feature, the tuned tip GBT (with a `decision_settings.json` holding the threshold and the rescaling weight) and the zone KMeans pipeline. Each was reloaded and checked against the in-memory model.
-- **Twenty-five MLflow runs**, tagged by `task`: ten for fare, six for tips, nine for clustering.
-- **Reproducibility records:** each run logs the Delta version of the Silver table and of its own input tables with their row counts, and each model folder holds a `manifest.json` with the data versions, features and types, split, hyperparameters, test metrics and software versions (Python, Spark, MLflow).
+- **Twenty-five model runs** in MLflow, tagged by `task`: ten for fare, six for tips, nine for clustering (the final `kmeans_k6` run also holds the elbow and silhouette figure).
+- **Thirty-seven tuning runs**: five searches (two for the fare GBT, one logistic regression and two GBT searches for tips), each a parent run with one nested child run per setting tried (32 settings in all), built from the cross-validation results already computed. They carry a `search_task` tag, not `task`, so the model comparison tables never include them.
+- **Reproducibility records:** each model run logs the Delta version of the Silver table and of its own input tables with their row counts, and each model folder holds a `manifest.json` with the data versions, features and types, split, hyperparameters, test metrics and software versions (Python, Spark, MLflow).
 - **Delta tables** in `taxi.taxi_ml`: the frozen samples and splits, `zone_profile`, `zone_clusters` (the assignment) and `zone_cluster_names`.
 
 ---
@@ -105,6 +106,7 @@ Each of 216 zones (at least 500 pickups) becomes one row: log trip count, averag
 ```
 nyc-yellow-taxi-2026-MLlib/
 ├── README.md
+├── .gitignore
 └── notebooks/
     └── taxi_dataset_mllib.ipynb     # all three projects, with outputs
 ```
