@@ -106,7 +106,6 @@ Each of 216 zones (at least 500 pickups) becomes one row: log trip count, averag
 ```
 nyc-yellow-taxi-2026-MLlib/
 ├── README.md
-├── .gitignore
 └── notebooks/
     └── taxi_dataset_mllib.ipynb     # all three projects, with outputs
 ```
