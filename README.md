@@ -79,6 +79,7 @@ Each of 216 zones (at least 500 pickups) becomes one row: log trip count, averag
 
 - **k = 3 has the higher silhouette (0.70 against 0.55)** but only isolates the three airport zones, which the trip type already identifies; k = 6 also separates the nightlife zones from the Manhattan core.
 - **Seed stability:** the final model was compared with ten refits using other random seeds (adjusted Rand index 0.45 to 0.81). The airport, nightlife and Manhattan core groups hold; the split of the other 153 zones does not, so those three groups are a soft split. The cluster names are interpretations of the profiles and busiest zones.
+- The elbow and silhouette scores for k = 2 to 10, which the choice of k = 6 rests on: ![Elbow method and silhouette score for k = 2 to 10](figures/elbow_silhouette.png)
 
 ---
 
